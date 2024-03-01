@@ -42,17 +42,17 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.commandName == 'roulette') {
       if (await Games.get(interaction.guildId)) {
         // Send a message indicating that a game is already running in this server
-        interaction.reply({ content: 'There is already a game in progress in this server.', ephemeral: true });
+        interaction.reply({ content: 'في لعبة حاليا قيد التشغيل في هذا السيرفر .', ephemeral: true });
         return;
       }
       const embed = new EmbedBuilder()
         .setTitle('Roulette')
         .setColor('#ccc666')
-        .setDescription(`__**Players:**__\nNo players are participating in the game`)
+        .setDescription(`__**Players:**__\nلا يوجد عدد لاعبين كافي يشاركون في اللعبة`)
         .addFields(
           {
             name: '__Player Instructions:__',
-            value: `**1-** Join the game\n**2-** The first round will start, and a random player will be selected\n**3-** If you are the chosen player, you will select a player of your choice to be kicked from the game\n**4-** The player will be kicked, and a new round will start. When all players are kicked except for two, the wheel will spin, and the chosen player wins the game.`,
+            value: `**1-** الانضمام إلى العبة\n**2-** الجولة الاولى ستبدا وسيتم تحديد لاعب عشوائي\n**3-** اذا كنت انت اللاعب الذي تم اختياره عشوائيا ، فاانت ستحدد من اللاعب الذي سوف يخرج من اللعبة\n**4-** اللاعب سيطرد, وستبدأ جولة جديدة. حين جميع اللاعبين تم طردهم ماعدا لاعبين, العجلة ستدور, واللاعب المختار هو من سيربح.`,
           },
           {
             name: '__Game Starts In__:',
@@ -70,11 +70,11 @@ client.on('interactionCreate', async (interaction) => {
       // New buttons
       const randomButton = new ButtonBuilder().setCustomId(`join_random_roulette`).setLabel('Join Randomly').setStyle(ButtonStyle.Success);
 
-      const leaveButton = new ButtonBuilder().setCustomId(`leave_roulette`).setLabel('Leave the Game').setStyle(ButtonStyle.Danger);
+      const leaveButton = new ButtonBuilder().setCustomId(`leave_roulette`).setLabel('الخروج من العبة').setStyle(ButtonStyle.Danger);
 
       const rows = createButtonRows([...buttons, randomButton, leaveButton]);
       await interaction.reply({
-        content: 'Starting Roulette Game',
+        content: 'الروليت ستبدأ',
         components: rows,
         embeds: [embed],
       });
@@ -95,13 +95,13 @@ client.on('interactionCreate', async (interaction) => {
 
     // If no game is found, send a reply indicating no game running in this server
     if (!savedGame) {
-      interaction.reply({ content: 'No game is currently running in this server.', ephemeral: true });
+      interaction.reply({ content: 'لا يوجد لعبة حاليا قيد التشغيل في هذا السيرفر.', ephemeral: true });
       return;
     }
 
     // Check if the user has already joined the game
     if (savedGame.players.some((user) => user.user == interaction.user.id)) {
-      interaction.reply({ content: 'You have already joined. Please leave before joining again.', ephemeral: true });
+      interaction.reply({ content: 'انت فعليا موجود بلعبة. رجاءا اخرج من اللعبة قبل الدخول مجددا.', ephemeral: true });
       return;
     }
 
@@ -113,7 +113,7 @@ client.on('interactionCreate', async (interaction) => {
     }
 
     if (savedGame.players.some((user) => user.buttonNumber === number)) {
-      interaction.reply({ content: 'Number already taken, please try again.', ephemeral: true });
+      interaction.reply({ content: 'الرقم مآخوذ من لاعب اخر ، رجاءا حاول مرة أخرى .', ephemeral: true });
       return;
     }
     // Add the user to the game's players list with the corresponding button number
@@ -138,13 +138,13 @@ client.on('interactionCreate', async (interaction) => {
 
     // If no game is found, send a reply indicating no game running in this server
     if (!savedGame) {
-      interaction.reply({ content: 'No game is currently running in this server.', ephemeral: true });
+      interaction.reply({ content: 'لا يوجد لعبة قيد التشغيل في هذا السيرفر حاليا.', ephemeral: true });
       return;
     }
 
     // Check if the user has not joined the game
     if (!savedGame.players.some((user) => user.user == interaction.user.id)) {
-      interaction.reply({ content: 'You have not joined the game.', ephemeral: true });
+      interaction.reply({ content: 'عذرا انت لم تدخل للعبة اصلا.', ephemeral: true });
       return;
     }
 
@@ -163,18 +163,18 @@ client.on('interactionCreate', async (interaction) => {
     const savedGame = await Games.get(interaction.guildId);
     // If no game is found, send a reply indicating no game running in this server
     if (!savedGame) {
-      interaction.reply({ content: 'No game is currently running in this server.', ephemeral: true });
+      interaction.reply({ content: 'لايوجد لعبة روليت قيد التشغيل في هذا السيرفر حاليا.', ephemeral: true });
       return;
     }
 
     if (interaction.user.id != savedGame?.winner.id) {
       // Send a message indicating that the user is not the winner
-      interaction.reply({ content: 'You are not the winner of the game, so you cannot perform this action.', ephemeral: true });
+      interaction.reply({ content: 'انت لم تفوز, فاعذرا لايمكنك التصرف بهذا الفعل.', ephemeral: true });
       return;
     }
     if (Date.now() > savedGame.winner.until) {
       // Send a message indicating that the winner has missed their turn
-      interaction.reply({ content: 'You have missed your turn.', ephemeral: true });
+      interaction.reply({ content: 'تم طردك بسبب لقد نسيت دورك.', ephemeral: true });
       return;
     }
     // Remove the user from the game
@@ -185,7 +185,7 @@ client.on('interactionCreate', async (interaction) => {
 
     // Send a confirmation message that the user has withdrawn
     interaction.reply({ content: 'You have successfully withdrawn from the game.', ephemeral: true });
-    interaction.channel.send(`💣 | <@${interaction.user.id}> has withdrawn from the game, the next round will start in a few seconds...`);
+    interaction.channel.send(`💣 | <@${interaction.user.id}> لقد انسحب من اللعبة، ستبدأ الجولة التالية خلال ثوانٍ قليلة...`);
 
     // Start the next round of the game
     startGame(interaction);
@@ -195,25 +195,25 @@ client.on('interactionCreate', async (interaction) => {
     const savedGame = await Games.get(interaction.guildId);
     // If no game is found, send a reply indicating no game running in this server
     if (!savedGame) {
-      interaction.reply({ content: 'No game is currently running in this server.', ephemeral: true });
+      interaction.reply({ content: 'لا يوجد لعبة قيد التشغيل في هذا السيرفر حاليا', ephemeral: true });
       return;
     }
 
     if (interaction.user.id != savedGame?.winner.id) {
       // Send a message indicating that the user is not the winner
-      interaction.reply({ content: 'You are not the winner of the game, so you cannot kick players.', ephemeral: true });
+      interaction.reply({ content: 'انت لست اللاعب المختار فلايمكنك طرد اللاعبين', ephemeral: true });
       return;
     }
     if (Date.now() > savedGame.winner.until) {
       // Send a message indicating that the winner has missed their turn
-      interaction.reply({ content: 'You have missed your turn.', ephemeral: true });
+      interaction.reply({ content: 'لقد نسيت دورك.', ephemeral: true });
       return;
     }
     savedGame.players = savedGame.players.filter((player) => player.user != kickedUser);
     savedGame.winner.id = '';
 
-    interaction.reply({ content: 'Player has been kicked from the game.', ephemeral: true });
-    interaction.channel.send(`💣 | <@${kickedUser}> has been kicked from the game, the next round will start in a few seconds...`);
+    interaction.reply({ content: 'اللاعب تم طرده من اللعبة.', ephemeral: true });
+    interaction.channel.send(`💣 | <@${kickedUser}> تم طرد اللاعب هذا من اللعبة, الجولة التالية ستبدا بعد قليل...`);
     startGame(interaction);
   }
 });
@@ -231,7 +231,7 @@ const startGame = async (interaction, start = false) => {
   }
   if (start) {
     await interaction.channel.send({
-      content: `✅ | Numbers were distributed to each player. The first round will start in a few seconds...`,
+      content: `✅ | اللاعبين لقد اختاروا الارقام. الجولة الأولى ستبدا بعد ...`,
     });
   }
   await sleep(timeBetweenRounds);
@@ -266,7 +266,7 @@ const startGame = async (interaction, start = false) => {
         .setEmoji(emojis[Number(user.buttonNumber) - 1])
     );
 
-  const leaveButton = new ButtonBuilder().setCustomId(`withdrawal`).setLabel('Withdrawal').setStyle(ButtonStyle.Danger);
+  const leaveButton = new ButtonBuilder().setCustomId(`withdrawal`).setLabel('انسحاب').setStyle(ButtonStyle.Danger);
 
   const rows = createButtonRows([...buttons, leaveButton]);
 
@@ -276,7 +276,7 @@ const startGame = async (interaction, start = false) => {
     const embed = new EmbedBuilder()
       .setImage('attachment://wheel.png')
       .setColor('#4876a3')
-      .setDescription(`**:crown: This is the last round! The chosen player is the winning player of the game.**`);
+      .setDescription(`**:crown: هذي هي اخر جولة! اللاعب المختار هو سيفوز.**`);
     await interaction.channel.send({
       content: `**${winnerOption.user.buttonNumber} - <@${winnerOption.user.user}> **`,
       embeds: [embed],
@@ -287,7 +287,7 @@ const startGame = async (interaction, start = false) => {
     const embed = new EmbedBuilder()
       .setImage('attachment://wheel.png')
       .setColor('#4876a3')
-      .setDescription(`**⏰ | You have ${chooseTimeout} seconds to choose a player to send off**`);
+      .setDescription(`**⏰ | لاختيار اللاعب ليتم طرده ${chooseTimeout} لديك**`);
     await interaction.channel.send({
       content: `**${winnerOption.user.buttonNumber} - <@${winnerOption.user.user}> **`,
       embeds: [embed],
@@ -305,7 +305,7 @@ const startGame = async (interaction, start = false) => {
 
         // Send a message to the channel indicating that the user has been kicked for timeout
         interaction.channel.send(
-          `⏰ | <@${winnerOption.user.user}> has been kicked from the game due to timeout. The next round will start shortly...`
+          `⏰ | <@${winnerOption.user.user}> هذا اللاعب لقد تم طرده بسبب انتهى موعده لاختيار اللاعب الذي سيطرده ولم يختار. الجولة القادمة ستبدا سريعا ...`
         );
 
         // Start the next round of the game
